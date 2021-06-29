@@ -1,15 +1,26 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import Logo from '../Logo.png';
-import Home from '../Home.png'
+import Home from '../Home.png';
+import axios from 'axios';
 
 const EntranceRegister = () => {
-  const handleSubmit = (e) => {
+  let history = useHistory();
+  const handleSubmit = async (e) => {
     e.preventDefault()
     const formData = new FormData(e.target);
-    console.log(formData.get('email'));
-    console.log(formData.get('password'));
-    console.log(formData.get('repeate-password'));
+    await axios.post('http://localhost:7000/entrance/register',{
+      email: formData.get('email'),
+      password: formData.get('password')
+    }).then(res => {
+      if(typeof res.data === typeof ''){
+        alert(res.data)
+      } else {
+        const token = res.data.token;
+        sessionStorage.setItem('token', token);
+        history.push('/entry')
+      }
+    })
   }
   return (
     <div>

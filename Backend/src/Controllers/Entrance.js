@@ -12,9 +12,9 @@ module.exports.login = async (req, res) => {
       const token = jwt.sign({
         email: candidate.email,
         userId: candidate._id
-      }, keys.jwt, {expiresIn: 60 * 60});
+      }, keys.jwt, {expiresIn: 60 * 60 * 24});
       res.send({
-        token: `Bearer ${token}`
+        token: `${token}`
       })
     } else {
       res.send('Неверный пароль. Попробуйте снова')
@@ -35,9 +35,12 @@ module.exports.register = async (req, res) => {
       email: req.body.email,
       password: bcrypt.hashSync(password, salt)
     })
-    try{
+    const token = jwt.sign({user}, keys.jwt, {expiresIn: 60 * 60});
+    try {
       await user.save();
-      res.send(user)
+      res.send({
+        token: `${token}`
+      })
     } catch(error) {
       errorHandler(error);
     }

@@ -3,27 +3,21 @@ const errorHandler = require('../Utils/errorHandler');
 
 module.exports.entry = async (req, res) => {
   try {
-    const entry = await entrySchema.find().then({
-      user: req.user.id
+    const entry = await entrySchema.find({
+      user: req.user.userId
+    }).then(result => {
+       res.send(result)
     })
-    res.status(200).send(entry)
   } catch (error) {
-    errorHandler(res, error)
+    res.status(403).send(error);
+    // errorHandler(res, error)
   }
 }
-
-// module.exports.everyEntry = async (req, res) => {
-//   try {
-
-//   } catch (error) {
-//     errorHandler(res, error)
-//   }
-// }
 
 module.exports.removeEntry = async (req, res) => {
   try {
     await entrySchema.deleteOne({_id: req.params.id});
-    res.status(200).send('Запись удалена');
+    res.send('Запись удалена');
   } catch (error) {
     errorHandler(res, error)
   }
@@ -31,8 +25,11 @@ module.exports.removeEntry = async (req, res) => {
 
 module.exports.addEntry = async (req, res) => {
   try {
-    const entry = await new entrySchema(req.body).save();
-    res.status(200).send(entry)
+    req.body.user = req.user.userId;
+    const entry = await new entrySchema(req.body);
+    entry.save().then(result => {
+      res.send(result)
+    });
   } catch (error) {
     errorHandler(res, error)
   }
@@ -42,7 +39,7 @@ module.exports.changeEntry = async (req, res) => {
   try {
     const entry = await entrySchema.updateOne({_id: req.params.id}, req.body);
     await entry.find()
-    res.status(200).send(entry)
+    res.send(entry)
   } catch (error) {
     errorHandler(res, error)
   }

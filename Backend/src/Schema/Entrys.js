@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
+const moment = require('moment');
 
 const entrySchema = new Schema({
   name: {
@@ -11,16 +12,14 @@ const entrySchema = new Schema({
     required: true
   },
   date: {
-    type: Date,
-    default: Date.now
+    type: String,
   },
   complaints: {
     type: String,
     required: true
   },
   user: {
-    ref: 'users',
-    type: Schema.Types.ObjectId
+    type: String
   }
 })
 
