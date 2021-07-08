@@ -2,20 +2,17 @@ import React, { useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import Logo from '../Logo.png';
 import DisplayingRecords from './DisplayingRecords';
+import Sort from './Sort';
+import Filter from './Filter';
 import axios from 'axios';
-import InputLabel from '@material-ui/core/InputLabel';
-import MenuItem from '@material-ui/core/MenuItem';
-import FormControl from '@material-ui/core/FormControl';
-import Select from '@material-ui/core/Select';
-import TextField from '@material-ui/core/TextField';
-import Button from '@material-ui/core/Button';
-// import moment from 'moment';
+import { InputLabel, MenuItem, FormControl, Select, TextField, Button} from '@material-ui/core';
 
-const App = () => {
+const Entry = () => {
     let history = useHistory();
-    const [medicalMan, setMedicalMan] = useState('');
     const [allEntrys, setEntryes] = useState([]);
+    const [directionEntrys, setDirectionEntries] = useState('');
     const [valueInputName, setName] = useState('');
+    const [medicalMan, setMedicalMan] = useState('');
     const [valueInputDate, setDate] = useState('2021-01-01T00:00');
     const [valueInputComplaints, setComplaints] = useState('');
 
@@ -37,8 +34,6 @@ const App = () => {
       }
       fetchData();
     },[token]);
-    console.log(allEntrys);
-
 
     const logOut = () => {
       sessionStorage.clear()
@@ -65,6 +60,20 @@ const App = () => {
         });
       }
     }
+
+    const SortBy = (field, direction) => {
+      const copyAllEntrys = allEntrys.concat();
+      let sortAllEntrys;
+
+      if(direction === 'descending'){
+        sortAllEntrys = copyAllEntrys.reverse();
+      } else {
+        sortAllEntrys = copyAllEntrys.sort(
+          (a, b) => a[field] > b[field] ? 1 : -1);
+      }
+
+      setEntryes(sortAllEntrys);
+    }
   return (
     <div>
       <div>
@@ -74,7 +83,12 @@ const App = () => {
       </div>
       <div>
         <FormControl >
-          <TextField id="outlined-basic" label="Ф.И.О.:" variant="outlined" value={valueInputName} onChange = {(e) => setName(e.target.value)}/>
+          <TextField
+          id="outlined-basic"
+          label="Ф.И.О.:"
+          variant="outlined"
+          value={valueInputName}
+          onChange = {(e) => setName(e.target.value)}/>
           <InputLabel shrink id="demo-simple-select-placeholder-label-label">
             Врач:
           </InputLabel>
@@ -113,10 +127,16 @@ const App = () => {
         </FormControl>
       </div>
       <div>
-          <DisplayingRecords allEntrys={allEntrys}/>
+        <Sort allEntrys={allEntrys} sortBy={SortBy} setDirectionEntries={setDirectionEntries}/>
+      </div>
+      <div>
+        <Filter setEntryes={setEntryes} allEntrys={allEntrys} token={token}/>
+      </div>
+      <div>
+          <DisplayingRecords allEntrys={allEntrys} setEntryes={setEntryes}/>
       </div>
     </div>
   );
 }
 
-export default App;
+export default Entry;

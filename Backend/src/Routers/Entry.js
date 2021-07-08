@@ -9,13 +9,13 @@ router.get('/', checkToken, controllerEntry.entry);
 // http://localhost:7000/entry
 // router.get('/', passport.authenticate('jwt', {session: false}), controllerEntry.allEntry)
 
-//http://localhost:7000/entry/:id
-router.delete('/:id', controllerEntry.removeEntry)
+//http://localhost:7000/entry/delete
+router.delete('/delete', controllerEntry.removeEntry)
 
 //http://localhost:7000/entry
 router.post('/', checkToken, controllerEntry.addEntry)
 
-//http://localhost:7000/entry/:id
-router.patch('/:id', controllerEntry.changeEntry)
+//http://localhost:7000/entry/changeEntry
+router.patch('/changeEntry', controllerEntry.changeEntry)
 
 module.exports = router;

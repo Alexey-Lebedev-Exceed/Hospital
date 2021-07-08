@@ -9,15 +9,16 @@ module.exports.entry = async (req, res) => {
        res.send(result)
     })
   } catch (error) {
-    res.status(403).send(error);
-    // errorHandler(res, error)
+    errorHandler(res, error)
   }
 }
 
 module.exports.removeEntry = async (req, res) => {
   try {
-    await entrySchema.deleteOne({_id: req.params.id});
-    res.send('Запись удалена');
+    await entrySchema.deleteOne({_id: req.query._id});
+    entrySchema.find().then(result => {
+      res.send(result);
+    })
   } catch (error) {
     errorHandler(res, error)
   }
@@ -37,9 +38,10 @@ module.exports.addEntry = async (req, res) => {
 
 module.exports.changeEntry = async (req, res) => {
   try {
-    const entry = await entrySchema.updateOne({_id: req.params.id}, req.body);
-    await entry.find()
-    res.send(entry)
+    await entrySchema.updateOne({_id: req.body._id}, req.body);
+    entrySchema.find().then(result => {
+      res.send(result)
+    })
   } catch (error) {
     errorHandler(res, error)
   }
